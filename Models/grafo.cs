@@ -95,5 +95,39 @@ namespace DijkstraMVC.Models
             }
             return distancias;
         }
+
+        public List<List<Nodo>> EncontrarCaminos(string inicio, string destino)
+        {
+            Nodo nodoInicio = Nodos.Find(n => n.Nombre == inicio);
+            Nodo nodoDestino = Nodos.Find(n => n.Nombre == destino);
+
+            var caminos = new List<List<Nodo>>();
+            if (nodoInicio == null || nodoDestino == null) return caminos;
+
+            EncontrarCaminosRecursivo(nodoInicio, nodoDestino, new List<Nodo>(), caminos);
+            return caminos;
+        }
+
+        private void EncontrarCaminosRecursivo(Nodo actual, Nodo destino, List<Nodo> caminoActual, List<List<Nodo>> caminos)
+        {
+            caminoActual.Add(actual);
+
+            if (actual == destino)
+            {
+                caminos.Add(new List<Nodo>(caminoActual));
+            }
+            else
+            {
+                foreach (var arista in actual.Aristas)
+                {
+                    if (!caminoActual.Contains(arista.Destino))
+                    {
+                        EncontrarCaminosRecursivo(arista.Destino, destino, caminoActual, caminos);
+                    }
+                }
+            }
+
+            caminoActual.Remove(actual);
+        }
     }
 }
