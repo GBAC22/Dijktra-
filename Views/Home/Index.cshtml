@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "Crear Grafo Visualmente";
+}
+
+<h2>Crear Grafo Visualmente</h2>
+
+<!-- Canvas para dibujar el grafo -->
+<canvas id="grafoCanvas" width="600" height="400" style="border:1px solid #000;"></canvas>
+
+<div>
+    <button onclick="agregarNodo()">Agregar Nodo</button>
+    <button onclick="agregarArista()">Agregar Arista</button>
+    <button onclick="ejecutarDijkstra()">Ejecutar Dijkstra</button>
+</div>
+
+<p>Nodo de inicio: <input type="text" id="nodoInicio"></p>
+
+<h3>Resultados:</h3>
+<ul id="resultado"></ul>
+
+<!-- Scripts de JavaScript -->
+<script>
+    let nodos = [];
+    let aristas = [];
+    let nodoSeleccionado = null;
+    let canvas = document.getElementById("grafoCanvas");
+    let ctx = canvas.getContext("2d");
+
+    // Evento de clic en el canvas para agregar nodos
+    canvas.addEventListener("click", function (e) {
+        if (nodoSeleccionado == null) {
+            let x = e.offsetX;
+            let y = e.offsetY;
+            agregarNodoCanvas(x, y);
+        }
+    });
+
+    // Función para agregar un nodo
+    function agregarNodo() {
+        nodoSeleccionado = null;
+    }
+
+    function agregarNodoCanvas(x, y) {
+        let nombre = prompt("Ingrese el nombre del nodo:");
+        if (nombre) {
+            nodos.push({ nombre: nombre, x: x, y: y });
+            dibujar();
+        }
+    }
+
+    // Función para agregar una arista
+    function agregarArista() {
+        if (nodos.length < 2) {
+            alert("Debe haber al menos 2 nodos para agregar una arista.");
+            return;
+        }
+        let origen = prompt("Ingrese el nombre del nodo origen:");
+        let destino = prompt("Ingrese el nombre del nodo destino:");
+        let distancia = prompt("Ingrese la distancia:");
+        aristas.push({ origen: origen, destino: destino, distancia: parseInt(distancia) });
+        dibujar();
+    }
+
+    // Función para dibujar los nodos y aristas
+    function dibujar() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        aristas.forEach(function (arista) {
+            let nodoOrigen = nodos.find(n => n.nombre === arista.origen);
+            let nodoDestino = nodos.find(n => n.nombre === arista.destino);
+            if (nodoOrigen && nodoDestino) {
+                ctx.beginPath();
+                ctx.moveTo(nodoOrigen.x, nodoOrigen.y);
+                ctx.lineTo(nodoDestino.x, nodoDestino.y);
+                ctx.stroke();
+                ctx.fillText(arista.distancia, (nodoOrigen.x + nodoDestino.x) / 2, (nodoOrigen.y + nodoDestino.y) / 2);
+            }
+        });
+
+        nodos.forEach(function (nodo) {
+            ctx.beginPath();
+            ctx.arc(nodo.x, nodo.y, 20, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fillText(nodo.nombre, nodo.x - 10, nodo.y + 5);
+        });
+    }
+
+    // Función para ejecutar Dijkstra (enviar los datos al servidor)
+    function ejecutarDijkstra() {
+        let nodoInicio = document.getElementById("nodoInicio").value;
+        if (!nodoInicio) {
+            alert("Ingrese el nodo de inicio.");
+            return;
+        }
+
+        let data = {
+            nodos: nodos,
+            aristas: aristas,
+            nodoInicio: nodoInicio
+        };
+
+        fetch('/Dijkstra/EjecutarDijkstra', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(result => {
+                let ul = document.getElementById("resultado");
+                ul.innerHTML = '';
+                for (const [nodo, distancia] of Object.entries(result)) {
+                    let li = document.createElement("li");
+                    li.textContent = `Nodo ${nodo}: ${distancia}`;
+                    ul.appendChild(li);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>
+
