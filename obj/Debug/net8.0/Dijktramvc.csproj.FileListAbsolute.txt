@@ -37,3 +37,4 @@ C:\Ingenieria en sistemas\10mo semestre\SISTEMAS DE INFORMACION GEOGRAFICA\Dijkt
 C:\Ingenieria en sistemas\10mo semestre\SISTEMAS DE INFORMACION GEOGRAFICA\Dijktra\Dijktramvc\obj\Debug\net8.0\Dijktramvc.pdb
 C:\Ingenieria en sistemas\10mo semestre\SISTEMAS DE INFORMACION GEOGRAFICA\Dijktra\Dijktramvc\obj\Debug\net8.0\Dijktramvc.genruntimeconfig.cache
 C:\Ingenieria en sistemas\10mo semestre\SISTEMAS DE INFORMACION GEOGRAFICA\Dijktra\Dijktramvc\obj\Debug\net8.0\ref\Dijktramvc.dll
+C:\Ingenieria en sistemas\10mo semestre\SISTEMAS DE INFORMACION GEOGRAFICA\Dijktra\Dijktramvc\obj\Debug\net8.0\Dijktramvc.sourcelink.json

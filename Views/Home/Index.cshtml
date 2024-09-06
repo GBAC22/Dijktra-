@@ -11,9 +11,11 @@
     <button onclick="agregarNodo()">Agregar Nodo</button>
     <button onclick="agregarArista()">Agregar Arista</button>
     <button onclick="ejecutarDijkstra()">Ejecutar Dijkstra</button>
+    <button onclick="encontrarCaminos()">Encontrar Caminos</button>
 </div>
 
 <p>Nodo de inicio: <input type="text" id="nodoInicio"></p>
+<p>Nodo destino: <input type="text" id="nodoDestino"></p>
 
 <h3>Resultados:</h3>
 <ul id="resultado"></ul>
@@ -93,8 +95,8 @@
         }
 
         let data = {
-            nodos: nodos,
-            aristas: aristas,
+            nodos: nodos.map(n => ({ nombre: n.nombre })),
+            aristas: aristas.map(a => ({ origen: a.origen, destino: a.destino, distancia: a.distancia })),
             nodoInicio: nodoInicio
         };
 
@@ -119,5 +121,42 @@
                 console.error('Error:', error);
             });
     }
-</script>
 
+    // Función para encontrar caminos (enviar los datos al servidor)
+    function encontrarCaminos() {
+        let nodoInicio = document.getElementById("nodoInicio").value;
+        let nodoDestino = document.getElementById("nodoDestino").value;
+        if (!nodoInicio || !nodoDestino) {
+            alert("Ingrese el nodo de inicio y el nodo destino.");
+            return;
+        }
+
+        let data = {
+            nodos: nodos.map(n => ({ nombre: n.nombre })),
+            aristas: aristas.map(a => ({ origen: a.origen, destino: a.destino, distancia: a.distancia })),
+            nodoInicio: nodoInicio,
+            nodoDestino: nodoDestino
+        };
+
+        fetch('/Dijkstra/EncontrarCaminos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(result => {
+                let ul = document.getElementById("resultado");
+                ul.innerHTML = '';
+                result.forEach((camino, index) => {
+                    let li = document.createElement("li");
+                    li.textContent = `Camino ${index + 1}: ${camino.join(" -> ")}`;
+                    ul.appendChild(li);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>
